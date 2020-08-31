@@ -1,5 +1,4 @@
 # computational-form
- Class work from Fall 2020 Computational Form
 
  Coursework produced for Justin Bakse's Fall 2020 Computational Form class. 
 
