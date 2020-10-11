@@ -1,54 +1,62 @@
-// Based on Dan Schiffman's Coding Challenge: 3D Terrain Generation: https://www.youtube.com/watch?v=IKB1hWWedMk
+// Daniel Shiffman
+// https://thecodingtrain.com/CodingChallenges/024-perlinnoiseflowfield.html
 
+var inc = 0.1;
+var scl = 30;
 var cols, rows;
-var scl = 20;
-var w = 1000;
-var h = 1400;
 
-var flying = 0;
+var zoff = 0;
 
-var terrain = [];
+var fr;
+
+var particles = [];
+
+var flowfield;
 
 function setup() {
-  createCanvas(600, 600, WEBGL);
-  cols = w / scl;
-  rows = h / scl;
+  createCanvas(600, 400);
+  cols = floor(width / scl);
+  rows = floor(height / scl);
+  fr = createP('');
 
-  for (let x = 0; x < cols; x++) {
-    terrain[x] = [];
-    for (let y = 0; y < rows; y++) {
-      terrain[x][y] = 0;
-    }
+  flowfield = new Array(cols * rows);
+
+  for (var i = 0; i < 300; i++) {
+    particles[i] = new Particle();
   }
+  background(120);
 }
 
 function draw() {
-
-  flying -= 0.1;
-  var yoff = flying;
+  var yoff = 0;
   for (var y = 0; y < rows; y++) {
     var xoff = 0;
     for (var x = 0; x < cols; x++) {
-      terrain[x][y] = map(noise(xoff, yoff), 0, 1, -200, 300);
-      xoff += 0.1;
+      var index = x + y * cols;
+      var angle = noise(xoff, yoff, zoff) * TWO_PI * 4;
+      var v = p5.Vector.fromAngle(angle);
+      v.setMag(1);
+      flowfield[index] = v;
+      xoff += inc;
+      stroke(map(noise(x, y), 0, 1, 100, 170), 10);
+      // push();
+      // translate(x * scl, y * scl);
+      // rotate(v.heading());
+      // strokeWeight(0.5);
+      // line(0, 0, scl, 13);
+      // pop();
     }
-    yoff += 0.1;
+    yoff += inc;
+
+    zoff += 0.0034;
   }
 
-  background(190, 100, 170, 150);
-  translate(0, 60);
-  rotateX(PI / 3);
-  fill(245, 130, 170, 150);;
-  translate(-w / 2, -h / 2, 0);
-  for (let y = 0; y < rows; y++) {
-    beginShape(TRIANGLE_STRIP);
-    for (let x = 0; x < cols; x++) {
-      stroke(map(noise(x, y), 0, 1, 150, 255), 100, map(noise(x, y), 0, 1, 150,
-        255));
-      vertex(x * scl, y * scl, terrain[x][y]);
-      vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
-
-    }
-    endShape();
+  for (var i = 0; i < particles.length; i++) {
+    particles[i].follow(flowfield);
+    particles[i].update();
+    particles[i].edges();
+    particles[i].show();
   }
+
+  // fr.html(floor(frameRate()));
 }
