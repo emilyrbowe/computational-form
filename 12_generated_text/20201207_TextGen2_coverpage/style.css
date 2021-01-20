@@ -1,0 +1,23 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+canvas {
+  display: block;
+}
+
+#coverpage {
+  border: 1px #777777 solid;
+  width: 40vw;
+  height: 55vh;
+  align: center;
+  margin: 20vh 30vw;
+  filter: drop-shadow(2px 2px 4px #777777);
+  background-color: #FFFFFF;
+}
+
+#image {
+  width: 20vw;
+  height: 10vh;
+  background-color: blue;
+}
